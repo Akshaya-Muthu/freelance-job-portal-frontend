@@ -11,7 +11,7 @@ export const JobsPage = () => {
   const [keyword, setKeyword] = useState("");
   const [jobType, setJobType] = useState("");
 
-  // Fetch all jobs without filters
+  // Fetch all jobs
   const fetchJobs = async () => {
     try {
       toast.loading('Loading jobs...');
@@ -25,14 +25,13 @@ export const JobsPage = () => {
     }
   };
 
-  // Fetch jobs by filters
+  // Fetch jobs with filters
   const fetchFilteredJobs = async (filters) => {
     try {
       toast.loading('Filtering jobs...');
       const res = await axios.get('/jobs/search', { params: filters });
       setJobs(res.data.jobs || []);
       toast.dismiss();
-
       if (!res.data.jobs.length) {
         toast('No jobs found with these filters', { icon: '⚠️' });
       }
@@ -48,13 +47,11 @@ export const JobsPage = () => {
       toast.error('Please enter a keyword to search');
       return;
     }
-
     try {
       toast.loading('Searching jobs...');
       const res = await axios.get('/jobs/search', { params: { keyword } });
       setJobs(res.data.jobs || []);
       toast.dismiss();
-
       if (!res.data.jobs.length) {
         toast('No jobs found for the given keyword', { icon: '⚠️' });
       }
@@ -135,51 +132,24 @@ export const JobsPage = () => {
           </button>
         </div>
 
-        {/* Filters: Location, Company & Job Type */}
+        {/* Filters */}
         <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
-          <select
-            className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700"
-            value={location}
-            onChange={handleLocationChange}
-          >
+          <select className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700" value={location} onChange={handleLocationChange}>
             <option value="">Filter by Location</option>
-            {locations.map((loc, index) => (
-              <option key={index} value={loc.toLowerCase()}>
-                {loc}
-              </option>
-            ))}
+            {locations.map((loc, index) => <option key={index} value={loc.toLowerCase()}>{loc}</option>)}
           </select>
 
-          <select
-            className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700"
-            value={company}
-            onChange={handleCompanyChange}
-          >
+          <select className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700" value={company} onChange={handleCompanyChange}>
             <option value="">Filter by Company</option>
-            {companies.map((comp) => (
-              <option key={comp.id} value={comp.name.toLowerCase()}>
-                {comp.name}
-              </option>
-            ))}
+            {companies.map((comp) => <option key={comp.id} value={comp.name.toLowerCase()}>{comp.name}</option>)}
           </select>
 
-          <select
-            className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700"
-            value={jobType}
-            onChange={handleJobTypeChange}
-          >
+          <select className="w-full md:w-[350px] p-3 bg-gray-900 text-white rounded-xl border border-gray-700" value={jobType} onChange={handleJobTypeChange}>
             <option value="">Filter by Job Type</option>
-            {jobTypes.map((type, index) => (
-              <option key={index} value={type.toLowerCase()}>
-                {type}
-              </option>
-            ))}
+            {jobTypes.map((type, index) => <option key={index} value={type.toLowerCase()}>{type}</option>)}
           </select>
 
-          <button
-            className="px-6 py-3 bg-red-600 cursor-pointer text-white rounded-xl hover:bg-red-700 transition"
-            onClick={handleClearFilters}
-          >
+          <button className="px-6 py-3 bg-red-600 cursor-pointer text-white rounded-xl hover:bg-red-700 transition" onClick={handleClearFilters}>
             Clear Filter
           </button>
         </div>
@@ -189,7 +159,9 @@ export const JobsPage = () => {
       <div className="px-6 md:px-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.length > 0 ? (
-            jobs.map((job, index) => <JobCart key={index} job={job} />)
+            jobs.map((job, index) => (
+              <JobCart key={index} job={job} />
+            ))
           ) : (
             <p className="text-white text-center col-span-full">No Jobs Found</p>
           )}
