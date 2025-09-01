@@ -3,7 +3,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
 const ChatContext = createContext();
-const ENDPOINT = "http://localhost:5000";
+
+// ✅ Socket.io should connect to root URL, not /api
+const ENDPOINT = "https://freelance-job-portal-backend.onrender.com";
 
 export const ChatProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
@@ -12,10 +14,16 @@ export const ChatProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(ENDPOINT, { withCredentials: true });
+    const newSocket = io(ENDPOINT, {
+      transports: ["websocket"],  // ✅ ensures WebSocket
+      withCredentials: true,
+    });
+
     setSocket(newSocket);
 
-    return () => newSocket.disconnect();
+    return () => {
+      newSocket.connect();
+    };
   }, []);
 
   const joinRoom = (roomId) => {
@@ -40,5 +48,4 @@ export const ChatProvider = ({ children }) => {
   );
 };
 
-// ✅ Export useChat hook
 export const useChat = () => useContext(ChatContext);

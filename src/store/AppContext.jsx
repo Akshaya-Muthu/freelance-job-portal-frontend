@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
         setIsLoggedIn,
         getUserData,
         logout,
-        backendURL: "http://localhost:5000/api", // fallback backend URL
+        backendURL: "https://freelance-job-portal-backend.onrender.com/api", // fallback backend URL
       }}
     >
       {children}
